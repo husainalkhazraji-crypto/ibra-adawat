@@ -38,6 +38,7 @@ struct HomeView: View {
                         filesCard
                         tools
                         if !store.jobs.isEmpty { jobs }
+                        MyAppsCard()
                     }
                     .padding(16)
                 }

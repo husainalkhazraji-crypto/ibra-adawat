@@ -31,6 +31,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,6 +111,8 @@ private fun Home(onFiles: (List<Uri>) -> Unit, onLanguage: (String) -> Unit) {
             Spacer(Modifier.height(24.dp))
             LanguagePicker(onLanguage)
             Spacer(Modifier.height(28.dp))
+            MyApps()
+            Spacer(Modifier.height(16.dp))
             About()
         }
     }
@@ -173,5 +177,67 @@ private fun About() {
         Spacer(Modifier.height(6.dp))
         Text("t.me/ibraprogram · TikTok: ibraprogram", style = MaterialTheme.typography.bodySmall, color = Look.Muted)
         Text("Based on Adawat by Motalim · GPL v3", style = MaterialTheme.typography.bodySmall, color = Look.Muted)
+    }
+}
+
+
+private data class PromoApp(val name: String, val text: String, val link: String, val color: Long, val badge: String?)
+
+private fun parsePromo(json: String): List<PromoApp> = runCatching {
+    val apps = org.json.JSONObject(json).getJSONArray("apps")
+    (0 until apps.length()).mapNotNull { i ->
+        val app = apps.getJSONObject(i)
+        val name = app.optString("name").takeIf { it.isNotBlank() } ?: return@mapNotNull null
+        val text = if (L10n.isArabic) app.optString("ar", app.optString("en")) else app.optString("en", app.optString("ar"))
+        val color = runCatching { android.graphics.Color.parseColor(app.optString("color", "#E3192B")).toLong() and 0xFFFFFFFFL }.getOrDefault(0xFFE3192BL)
+        PromoApp(name, text, app.optString("link", "https://t.me/ibraprogram"), color, app.optString("badge").takeIf { it.isNotBlank() })
+    }
+}.getOrDefault(emptyList())
+
+/** "My apps": adverts for Ibrahim's other apps, read from promo/apps.json in the repository and kept for offline use. */
+@Composable
+private fun MyApps() {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val prefs = remember { context.getSharedPreferences("promo", android.content.Context.MODE_PRIVATE) }
+    var apps by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(parsePromo(prefs.getString("json", "") ?: "")) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        val json = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching {
+                val connection = java.net.URL("https://raw.githubusercontent.com/ibrata2/ibra-adawat/main/promo/apps.json?t=${System.currentTimeMillis()}")
+                    .openConnection() as java.net.HttpURLConnection
+                connection.connectTimeout = 8000
+                connection.readTimeout = 8000
+                connection.inputStream.bufferedReader().use { it.readText() }
+            }.getOrNull()
+        }
+        if (json != null && parsePromo(json).isNotEmpty()) {
+            prefs.edit().putString("json", json).apply()
+            apps = parsePromo(json)
+        }
+    }
+    if (apps.isEmpty()) return
+    fun open(url: String) = runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+    Column(Modifier.fillMaxWidth()) {
+        Text(if (L10n.isArabic) "تطبيقاتي" else "My apps", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
+             color = MaterialTheme.colorScheme.onBackground)
+        Spacer(Modifier.height(8.dp))
+        apps.forEach { app ->
+            Row(
+                Modifier.fillMaxWidth().padding(vertical = 4.dp).clip(RoundedCornerShape(14.dp)).background(Color(0x14000000))
+                    .clickable { open(app.link) }.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.size(42.dp).clip(RoundedCornerShape(10.dp)).background(Color(app.color)), contentAlignment = Alignment.Center) {
+                    Text(app.name.replace("IBRA", "").replace("iBRA", "").trim().filter { it.isLetterOrDigit() }.take(2).uppercase().ifEmpty { "IB" },
+                         color = Color.White, fontWeight = FontWeight.Bold)
+                }
+                Spacer(Modifier.width(10.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(if (app.badge != null) "${app.name} · ${app.badge}" else app.name, fontWeight = FontWeight.SemiBold,
+                         color = MaterialTheme.colorScheme.onBackground)
+                    Text(app.text, style = MaterialTheme.typography.bodySmall, color = Look.Muted)
+                }
+            }
+        }
     }
 }

@@ -105,6 +105,9 @@ public sealed class HomeWindow : Window
         var linkButton = ToolButton("", T("Download from Link", "تحميل من رابط"), Windows.IbraWindows.DownloadLink);
         DockPanel.SetDock(linkButton, Dock.Right);
         toolbar.Children.Add(linkButton);
+        var appsButton = ToolButton("\uE71D", T("My apps", "تطبيقاتي"), Promo.Present);
+        DockPanel.SetDock(appsButton, Dock.Right);
+        toolbar.Children.Add(appsButton);
         DockPanel.SetDock(toolbar, Dock.Top);
         root.Children.Add(toolbar);
         var line = new Border { Height = 1, Background = Theme.Hairline };
@@ -156,6 +159,9 @@ public sealed class HomeWindow : Window
         DockPanel.SetDock(_readyBar, Dock.Top);
         sectionsSide.Children.Add(_readyBar);
         BuildSections();
+        var promo = Promo.Banner();
+        DockPanel.SetDock(promo, Dock.Bottom);
+        sectionsSide.Children.Add(promo);
         sectionsSide.Children.Add(new Border { Child = _sections, Background = Theme.Card, CornerRadius = new CornerRadius(12), BorderBrush = Theme.Hairline, BorderThickness = new Thickness(1), ClipToBounds = true });
         Grid.SetColumn(sectionsSide, 0);
         body.Children.Add(sectionsSide);
