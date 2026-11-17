@@ -100,6 +100,10 @@ public static class SettingsWindow
         stack.Children.Add(UI.Text("برمجة وتطوير ابراهيم الخزرجي", 13).Pad(0, 2));
         var links = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 6, 0, 0) };
         void Open(string url) { try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); } catch (Exception) { } }
+        var site = UI.Button(L10n.IsArabic ? "تطبيقاتي · ibraprogram.netlify.app" : "My apps · ibraprogram.netlify.app", () => Open("https://ibraprogram.netlify.app/"), primary: true, icon: "\uE774");
+        site.HorizontalAlignment = HorizontalAlignment.Left;
+        site.Margin = new Thickness(0, 6, 0, 0);
+        stack.Children.Add(site);
         links.Children.Add(UI.Button("Telegram", () => Open("https://t.me/ibraprogram"), icon: "\uE724"));
         links.Children.Add(new Border { Width = 8 });
         links.Children.Add(UI.Button("TikTok · ibraprogram", () => Open("https://www.tiktok.com/@ibraprogram"), icon: "\uE8B2"));

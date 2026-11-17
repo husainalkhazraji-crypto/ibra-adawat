@@ -1,12 +1,55 @@
 {
-  "_help": "إعلانات تطبيقاتك داخل IBMC. عدّل هذا الملف من GitHub (زر القلم) واحفظه: يظهر التعديل بكل الأجهزة بدون نسخة جديدة. لكل تطبيق: name الاسم، ar وصف عربي، en وصف إنگليزي، link رابط الفتح، icon رابط صورة الأيقونة (اختياري)، color لون الشارة (اختياري)، badge كلمة صغيرة مثل جديد (اختياري).",
+  "_help": "إعلانات تطبيقاتك داخل IBMC. عدّل هذا الملف من GitHub (زر القلم) واحفظه: يظهر التعديل بكل الأجهزة بدون نسخة جديدة. لكل تطبيق: name الاسم، ar وصف عربي، en وصف إنگليزي، link رابط الفتح (الافتراضي موقع تطبيقاتي)، icon رابط صورة الأيقونة (اختياري)، color لون الشارة (اختياري)، badge كلمة صغيرة مثل جديد (اختياري).",
   "apps": [
-    { "name": "IBDM Pro", "ar": "مدير تحميل سريع يلتقط الفيديو من المتصفح وينزله بالجودة اللي تختارها", "en": "Fast download manager that grabs videos from your browser", "link": "https://t.me/ibraprogram", "color": "#E3192B", "badge": "جديد" },
-    { "name": "iBRA PLAYER", "ar": "مشغل ميديا بستايل زجاجي يشغل كل الصيغ", "en": "Glass-style media player for every format", "link": "https://t.me/ibraprogram", "color": "#1E7BFF" },
-    { "name": "IBRATV", "ar": "قنوات بث مباشر وسينما على الويندوز والأندرويد والآيفون", "en": "Live TV channels and cinema on Windows, Android and iPhone", "link": "https://t.me/ibraprogram", "color": "#8E44FF" },
-    { "name": "IBRA CROM", "ar": "متصفح سريع يدعم إضافات كروم بستايلات زجاجية", "en": "Fast browser with Chrome extensions and glass styles", "link": "https://t.me/ibraprogram", "color": "#F06A0F" },
-    { "name": "IBRA LENS", "ar": "ابحث عن صورك بالحاسبة بالوصف أو بصورة، ولگى المكرر", "en": "Find your photos by description or by a picture, and spot duplicates", "link": "https://t.me/ibraprogram", "color": "#1FA85C" },
-    { "name": "IBRA GLASS", "ar": "ستايلات زجاجية لمستكشف الملفات بويندوز", "en": "Glass styles for Windows File Explorer", "link": "https://t.me/ibraprogram", "color": "#00A3B4" },
-    { "name": "IBRA TV Tuner", "ar": "خصص واجهة التلفزيون الذكي والبوكس وشيل البرامج الزايدة", "en": "Customise your Android TV home screen and remove bloat", "link": "https://t.me/ibraprogram", "color": "#333A44" }
+    {
+      "name": "IBDM Pro",
+      "ar": "مدير تحميل سريع يلتقط الفيديو من المتصفح وينزله بالجودة اللي تختارها",
+      "en": "Fast download manager that grabs videos from your browser",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#E3192B",
+      "badge": "جديد"
+    },
+    {
+      "name": "iBRA PLAYER",
+      "ar": "مشغل ميديا بستايل زجاجي يشغل كل الصيغ",
+      "en": "Glass-style media player for every format",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#1E7BFF"
+    },
+    {
+      "name": "IBRATV",
+      "ar": "قنوات بث مباشر وسينما على الويندوز والأندرويد والآيفون",
+      "en": "Live TV channels and cinema on Windows, Android and iPhone",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#8E44FF"
+    },
+    {
+      "name": "IBRA CROM",
+      "ar": "متصفح سريع يدعم إضافات كروم بستايلات زجاجية",
+      "en": "Fast browser with Chrome extensions and glass styles",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#F06A0F"
+    },
+    {
+      "name": "IBRA LENS",
+      "ar": "ابحث عن صورك بالحاسبة بالوصف أو بصورة، ولگى المكرر",
+      "en": "Find your photos by description or by a picture, and spot duplicates",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#1FA85C"
+    },
+    {
+      "name": "IBRA GLASS",
+      "ar": "ستايلات زجاجية لمستكشف الملفات بويندوز",
+      "en": "Glass styles for Windows File Explorer",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#00A3B4"
+    },
+    {
+      "name": "IBRA TV Tuner",
+      "ar": "خصص واجهة التلفزيون الذكي والبوكس وشيل البرامج الزايدة",
+      "en": "Customise your Android TV home screen and remove bloat",
+      "link": "https://ibraprogram.netlify.app/",
+      "color": "#333A44"
+    }
   ]
 }

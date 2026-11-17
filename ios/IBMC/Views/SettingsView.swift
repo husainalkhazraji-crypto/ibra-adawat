@@ -39,6 +39,7 @@ struct SettingsView: View {
                         }
                         Text("برمجة وتطوير ابراهيم الخزرجي").font(.headline)
                     }
+                    Link(destination: URL(string: "https://ibraprogram.netlify.app/")!) { Label(L.t("My apps · ibraprogram.netlify.app", "تطبيقاتي · ibraprogram.netlify.app"), systemImage: "square.grid.2x2.fill").bold() }
                     Link(destination: URL(string: "https://t.me/ibraprogram")!) { Label("Telegram · t.me/ibraprogram", systemImage: "paperplane.fill") }
                     Link(destination: URL(string: "https://www.tiktok.com/@ibraprogram")!) { Label("TikTok · ibraprogram", systemImage: "music.note") }
                     Text("Based on Adawat by Motalim · GPL v3").font(.caption).foregroundStyle(.secondary)

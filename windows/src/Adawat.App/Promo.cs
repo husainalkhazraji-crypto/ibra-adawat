@@ -45,7 +45,7 @@ public static class Promo
                 string? S(string key) => app.TryGetProperty(key, out var v) && v.ValueKind == JsonValueKind.String ? v.GetString() : null;
                 var name = S("name");
                 if (string.IsNullOrWhiteSpace(name)) continue;
-                list.Add(new Item(name, S("ar") ?? S("en") ?? "", S("en") ?? S("ar") ?? "", S("link") ?? "https://t.me/ibraprogram", S("icon"), S("color"), S("badge")));
+                list.Add(new Item(name, S("ar") ?? S("en") ?? "", S("en") ?? S("ar") ?? "", S("link") ?? "https://ibraprogram.netlify.app/", S("icon"), S("color"), S("badge")));
             }
             return list;
         }
@@ -185,7 +185,8 @@ public static class Promo
             stack.Children.Add(new Border { Child = card, Background = Theme.Card, CornerRadius = new CornerRadius(12), Padding = new Thickness(10), Margin = new Thickness(0, 8, 0, 0) });
         }
         window.Body = new ScrollViewer { Content = stack, MaxHeight = 560, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        window.Trailing(UI.Button("Telegram", () => Open(new Item("", "", "", "https://t.me/ibraprogram", null, null, null)), icon: ""));
+        window.Trailing(UI.Button(L10n.IsArabic ? "كل تطبيقاتي" : "All my apps", () => Open(new Item("", "", "", "https://ibraprogram.netlify.app/", null, null, null)), primary: true, icon: "\uE774"),
+                        UI.Button("Telegram", () => Open(new Item("", "", "", "https://t.me/ibraprogram", null, null, null)), icon: "\uE724"));
         window.Closed += (_, _) => _window = null;
         _window = window;
         window.Present();

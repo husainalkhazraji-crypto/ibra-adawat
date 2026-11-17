@@ -29,7 +29,7 @@ final class PromoFeed: ObservableObject {
         return list.compactMap { app in
             guard let name = app["name"] as? String, !name.isEmpty else { return nil }
             let ar = app["ar"] as? String ?? app["en"] as? String ?? ""
-            return PromoApp(name: name, ar: ar, en: app["en"] as? String ?? ar, link: app["link"] as? String ?? "https://t.me/ibraprogram",
+            return PromoApp(name: name, ar: ar, en: app["en"] as? String ?? ar, link: app["link"] as? String ?? "https://ibraprogram.netlify.app/",
                             color: app["color"] as? String, badge: app["badge"] as? String, icon: app["icon"] as? String)
         }
     }

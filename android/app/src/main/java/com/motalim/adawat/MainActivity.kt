@@ -168,6 +168,10 @@ private fun About() {
         Text("IBMC — Ibrahim Multimedia Converter", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
         Text("برمجة وتطوير ابراهيم الخزرجي", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
         Spacer(Modifier.height(10.dp))
+        Text(if (L10n.isArabic) "تطبيقاتي · ibraprogram.netlify.app" else "My apps · ibraprogram.netlify.app", color = Color.White,
+             fontWeight = FontWeight.SemiBold, modifier = Modifier.clip(RoundedCornerShape(50)).background(Look.Accent)
+                .clickable { open("https://ibraprogram.netlify.app/") }.padding(horizontal = 18.dp, vertical = 9.dp))
+        Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text("Telegram", color = Color.White, modifier = Modifier.clip(RoundedCornerShape(50)).background(Color(0xFF229ED9))
                 .clickable { open("https://t.me/ibraprogram") }.padding(horizontal = 16.dp, vertical = 8.dp))
@@ -190,7 +194,7 @@ private fun parsePromo(json: String): List<PromoApp> = runCatching {
         val name = app.optString("name").takeIf { it.isNotBlank() } ?: return@mapNotNull null
         val text = if (L10n.isArabic) app.optString("ar", app.optString("en")) else app.optString("en", app.optString("ar"))
         val color = runCatching { android.graphics.Color.parseColor(app.optString("color", "#E3192B")).toLong() and 0xFFFFFFFFL }.getOrDefault(0xFFE3192BL)
-        PromoApp(name, text, app.optString("link", "https://t.me/ibraprogram"), color, app.optString("badge").takeIf { it.isNotBlank() })
+        PromoApp(name, text, app.optString("link", "https://ibraprogram.netlify.app/"), color, app.optString("badge").takeIf { it.isNotBlank() })
     }
 }.getOrDefault(emptyList())
 
