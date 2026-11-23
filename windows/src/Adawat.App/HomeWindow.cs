@@ -159,7 +159,8 @@ public sealed class HomeWindow : Window
         DockPanel.SetDock(_readyBar, Dock.Top);
         sectionsSide.Children.Add(_readyBar);
         BuildSections();
-        var promo = Promo.Banner();
+        // Newest programs and games from IBRA STORE (Windows only).
+        var promo = StoreSlides.Make();
         DockPanel.SetDock(promo, Dock.Bottom);
         sectionsSide.Children.Add(promo);
         sectionsSide.Children.Add(new Border { Child = _sections, Background = Theme.Card, CornerRadius = new CornerRadius(12), BorderBrush = Theme.Hairline, BorderThickness = new Thickness(1), ClipToBounds = true });
