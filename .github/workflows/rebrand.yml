@@ -254,7 +254,7 @@ jobs:
               json.loads(read(p).lstrip("﻿"))
           print("Rebrand applied.")
           PYEOF
-          python3 -I "$RUNNER_TEMP/rebrand.py"
+          python3 "$RUNNER_TEMP/rebrand.py"
 
       - name: Commit and start the build
         env:
