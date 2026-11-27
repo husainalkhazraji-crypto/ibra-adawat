@@ -1,8 +1,9 @@
-name: Build IBMC (Windows, Android, iPhone)
+name: Build nice tools (Windows, Android, iPhone)
 
 on:
   push:
     branches: [main]
+    paths-ignore: [".github/workflows/**"]
   workflow_dispatch:
 
 permissions:
@@ -126,12 +127,12 @@ jobs:
           $version = "2.0.${{ github.run_number }}"
           & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /Q /DArch=x64 /DAppVersion=$version "/DSource=..\build\publish\app-x64" Adawat.iss
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          Get-FileHash ..\build\installer\IBMC-Setup-x64.exe -Algorithm SHA256 | Format-List
+          Get-FileHash ..\build\installer\NiceTools-Setup-x64.exe -Algorithm SHA256 | Format-List
 
       - uses: actions/upload-artifact@v4
         with:
-          name: IBMC-Setup-x64
-          path: windows/build/installer/IBMC-Setup-x64.exe
+          name: NiceTools-Setup-x64
+          path: windows/build/installer/NiceTools-Setup-x64.exe
 
   android:
     runs-on: ubuntu-latest
@@ -180,7 +181,7 @@ jobs:
             echo "::warning::No IBMC_KEYSTORE secret: signing with a temporary key (updates will need uninstalling the old version first)."
             pass=temporary
             keytool -genkeypair -keystore "$RUNNER_TEMP/ibmc.jks" -alias ibmc -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass $pass -keypass $pass -dname "CN=IBMC, C=IQ" > /dev/null
+              -storepass $pass -keypass $pass -dname "CN=nice tools, C=IQ" > /dev/null
           fi
           echo "IBMC_STORE_FILE=$RUNNER_TEMP/ibmc.jks" >> $GITHUB_ENV
           echo "IBMC_STORE_PASSWORD=$pass" >> $GITHUB_ENV
@@ -193,13 +194,13 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease -Pibmc.versionCode=${{ github.run_number }} -Pibmc.versionName=2.0.${{ github.run_number }}
           apk=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
-          cp "$apk" IBMC-Android.apk
-          ls -la IBMC-Android.apk
+          cp "$apk" NiceTools-Android.apk
+          ls -la NiceTools-Android.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: IBMC-Android
-          path: android/IBMC-Android.apk
+          name: NiceTools-Android
+          path: android/NiceTools-Android.apk
 
   ios:
     runs-on: macos-15
@@ -225,13 +226,13 @@ jobs:
         run: |
           mkdir -p Payload
           cp -R build/Build/Products/Release-iphoneos/IBMC.app Payload/
-          zip -qry IBMC-iOS-unsigned.ipa Payload
-          ls -la IBMC-iOS-unsigned.ipa
+          zip -qry NiceTools-iOS-unsigned.ipa Payload
+          ls -la NiceTools-iOS-unsigned.ipa
 
       - uses: actions/upload-artifact@v4
         with:
-          name: IBMC-iOS
-          path: ios/IBMC-iOS-unsigned.ipa
+          name: NiceTools-iOS
+          path: ios/NiceTools-iOS-unsigned.ipa
 
   release:
     needs: [build, android, ios]
@@ -247,9 +248,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v2.0.${{ github.run_number }}
-          name: IBMC — Ibrahim Multimedia Converter 2.0.${{ github.run_number }}
+          name: nice tools 2.0.${{ github.run_number }}
           make_latest: true
           files: out/*
           body: |
-            IBMC — Ibrahim Multimedia Converter — نسخة مطوّرة من [أدوات](https://github.com/motalim-ai/adawat) (GPL v3).
-            **ويندوز:** IBMC-Setup-x64.exe · **أندرويد:** IBMC-Android.apk · **آيفون (بدون توقيع):** IBMC-iOS-unsigned.ipa
+            nice tools — تطوير Husain alkhazraji. مبني على [IBMC](https://github.com/ibrata2/ibra-adawat) و[أدوات](https://github.com/motalim-ai/adawat) (GPL v3).
+            **ويندوز:** NiceTools-Setup-x64.exe · **أندرويد:** NiceTools-Android.apk · **آيفون (بدون توقيع):** NiceTools-iOS-unsigned.ipa

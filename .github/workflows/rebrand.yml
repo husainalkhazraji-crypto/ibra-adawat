@@ -1,0 +1,269 @@
+name: Apply nice tools rebrand
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/rebrand.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  rebrand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Pillow
+        run: python3 -m pip install --quiet pillow==12.3.0
+
+      - name: Apply the changes
+        run: |
+          cat > "$RUNNER_TEMP/rebrand.py" <<'PYEOF'
+          import json, math, pathlib, re, sys, uuid
+          from PIL import Image, ImageDraw
+
+          NAME, DEV, SLUG = "nice tools", "Husain alkhazraji", "NiceTools"
+          APP_ID = "com.husainalkhazraji.nicetools"
+          CREDIT = "Based on IBMC by Ibrahim Rosem and Adawat by Motalim · GPL v3"
+          R = pathlib.Path(".")
+          APP = R / "windows/src/Adawat.App"
+          AND = R / "android/app/src/main"
+
+          if not (APP / "Promo.cs").exists():
+              print("Already applied; nothing to do.")
+              sys.exit(0)
+
+          def read(p):
+              return p.read_bytes().decode("utf-8")
+
+          def write(p, s):
+              p.write_bytes(s.encode("utf-8"))
+
+          def sub(p, old, new):
+              s = read(p)
+              assert old in s, f"{p}: not found: {old!r}"
+              write(p, s.replace(old, new))
+
+          def cut(p, pattern, new=""):
+              s, n = re.subn(pattern, lambda m: new, read(p), flags=re.S | re.M)
+              assert n >= 1, f"{p}: pattern not found: {pattern!r}"
+              write(p, s)
+
+          # ---- adverts and old links ----
+          for f in [APP / "Promo.cs", APP / "StoreSlides.cs", R / "ios/IBMC/Views/MyApps.swift", R / "promo/apps.json"]:
+              f.unlink()
+          cut(APP / "Program.cs", r"^[ \t]*Promo\.Refresh\(\);\r?\n")
+          home = APP / "HomeWindow.cs"
+          cut(home, r"^[ \t]*var appsButton = .*?toolbar\.Children\.Add\(appsButton\);\r?\n")
+          cut(home, r"^[ \t]*// Newest programs and games from IBRA STORE.*?sectionsSide\.Children\.Add\(promo\);\r?\n")
+          sub(home, 'Text = "Ibrahim Multimedia Converter"', f'Text = "by {DEV}"')
+
+          win = APP / "SettingsWindow.cs"
+          cut(win, r"^[ \t]*var links = new StackPanel.*?stack\.Children\.Add\(links\);\r?\n")
+
+          kt = AND / "java/com/motalim/adawat/MainActivity.kt"
+          cut(kt, r"^[ \t]*MyApps\(\)\r?\n")
+          cut(kt, r"^private data class PromoApp\(.*\Z")
+          cut(kt, r"^[ \t]*val context = androidx\.compose\.ui\.platform\.LocalContext\.current\r?\n[ \t]*fun open\(url: String\).*?\n(?=[ \t]*Column\()")
+          cut(kt, r"^[ \t]*Spacer\(Modifier\.height\(10\.dp\)\)\r?\n[ \t]*Text\(if \(L10n\.isArabic\) \"تطبيقاتي.*?(?=^[ \t]*Text\(\"Based on Adawat)",
+              "")
+
+          cut(R / "ios/IBMC/Views/HomeView.swift", r"^[ \t]*MyAppsCard\(\)\r?\n")
+          sw = R / "ios/IBMC/Views/SettingsView.swift"
+          cut(sw, r"^[ \t]*Link\(destination:.*?(?=^[ \t]*Text\(\"Based on Adawat)")
+          sub(R / "ios/IBMC/Views/HomeView.swift", 'Text("Ibrahim Multimedia Converter")', f'Text("by {DEV}")')
+
+          # ---- leftovers of the earlier name, which belong to another app ----
+          rc = APP / "RightClick.cs"
+          cut(rc, r"^[ \t]*// Entries left by IBRA Adawat.*?(?=^[ \t]*var exe = )")
+          iss = R / "windows/installer/Adawat.iss"
+          cut(iss, r"^\[InstallDelete\]\r?\n; IBRA Adawat.*?(?=^; Files from an earlier)", "[InstallDelete]\n")
+          cut(iss, r"^; Entries of IBRA Adawat.*?(?=^; The same value)")
+          cut(iss, r"^[ \t]*Exec\([^\n]*IbraAdawat\.exe[^\n]*\n")
+          cut(iss, r"^[ \t]*\{ Settings and downloaded models of IBRA Adawat.*?(?=^[ \t]*if not FileExists)")
+          cut(win, r"^[ \t]*key\.DeleteValue\(\"IbraAdawat\", false\);\r?\n")
+          settings = R / "windows/src/Adawat.Core/Settings.cs"
+          cut(settings, r"^[ \t]*// Settings and downloaded models from IBRA Adawat.*?catch \(Exception e\) when [^\n]*\{ \}\r?\n")
+
+          # ---- identifiers that must not contain a space ----
+          sub(rc, '"IBMC.Open"', f'"{SLUG}.Open"')
+          sub(rc, 'Verb = "IBMC"', f'Verb = "{SLUG}"')
+          sub(APP / "Program.cs", "IBMC.SingleInstance", f"{SLUG}.SingleInstance")
+          sub(R / "windows/src/Adawat.Core/Ibra/Tools.cs", '"IBMC/1.0"', f'"{SLUG}/1.0"')
+          for old in ['GetValue("IBMC")', 'SetValue("IBMC",', 'DeleteValue("IBMC",']:
+              sub(win, old, old.replace("IBMC", SLUG))
+          sub(iss, r"shell\IBMC", "shell\\" + SLUG)
+          sub(iss, 'ValueName: "IBMC"', f'ValueName: "{SLUG}"')
+          sub(iss, "StopIBMC", "Stop" + SLUG)
+          sub(iss, "OutputBaseFilename=IBMC-Setup-", f"OutputBaseFilename={SLUG}-Setup-")
+          up = APP / "Updater.cs"
+          sub(up, "IBMC-Setup-x64.exe", f"{SLUG}-Setup-x64.exe")
+          sub(up, '"IBMC-update"', f'"{SLUG}-update"')
+          sub(up, "IBMC-Setup-{release.Version}", SLUG + "-Setup-{release.Version}")
+          sub(R / "windows/src/Adawat.Core/Ibra/SocialOps.cs", '"IBRA"', '"nice"')
+
+          # ---- publisher, ids, credit ----
+          sub(iss, "8D4E2B71-3C9A-4F6E-9B15-1A7C0E5D93F2", str(uuid.uuid5(uuid.NAMESPACE_DNS, APP_ID)).upper())
+          sub(iss, "AppPublisher=Ibrahim Rosem", f"AppPublisher={DEV}")
+          for p in [iss]:
+              write(p, read(p).replace("github.com/ibrata2/ibra-adawat", "github.com/husainalkhazraji-crypto/ibra-adawat"))
+          sub(R / "windows/Directory.Build.props", "Ibrahim Rosem — based on Adawat by Motalim", f"{DEV} — based on IBMC and Adawat (GPL v3)")
+          sub(R / "android/app/build.gradle.kts", "com.ibrata2.ibmc", APP_ID)
+          yml = R / "ios/project.yml"
+          sub(yml, "com.ibrata2.ibmc", APP_ID)
+          sub(yml, "bundleIdPrefix: com.ibrata2", "bundleIdPrefix: com.husainalkhazraji")
+          sub(AND / "java/com/motalim/adawat/work/Outputs.kt", '"$folder/Adawat"', f'"$folder/{NAME}"')
+          for p in [win, kt, sw]:
+              sub(p, "برمجة وتطوير ابراهيم الخزرجي", f"برمجة وتطوير {DEV}")
+
+          # ---- the visible name ----
+          files = []
+          for pattern in ["windows/src/**/*.cs", "windows/shared/*.json", "windows/installer/*.iss", "windows/Directory.Build.props",
+                          "android/app/src/main/**/*.kt", "android/app/src/main/**/*.xml", "android/app/src/main/assets/*.json",
+                          "ios/IBMC/**/*.swift", "ios/IBMC/Info.plist"]:
+              files += R.glob(pattern)
+          for p in files:
+              s = read(p)
+              n = s.replace("an IBMC", "a IBMC").replace("IBMC — Ibrahim Multimedia Converter", NAME).replace("لIBMC", "لـ " + NAME)
+              # File names the build depends on (IBMC.exe, IBMC.app) and the iOS source folder stay.
+              n = re.sub(r"\bIBMC\b(?!\.exe|\.app|\.xcodeproj|/Info)", NAME, n)
+              if n != s:
+                  write(p, n)
+
+          # The credit names IBMC, so it is written after the renaming above.
+          for p in [win, kt, sw]:
+              sub(p, "Based on Adawat by Motalim · GPL v3", CREDIT)
+          cut(iss, r"^AppCopyright=[^\r\n]*", f"AppCopyright={NAME} · {DEV} · {CREDIT}")
+
+          # ---- build outputs ----
+          ps = R / "BUILD-ON-WINDOWS.ps1"
+          sub(ps, "IBMC-Setup-x64.exe", f"{SLUG}-Setup-x64.exe")
+
+          # ---- notices required by the GPL ----
+          readme = R / "README.md"
+          old = read(readme)
+          start = old.index('<p align="center">')
+          write(readme, f"""# {NAME}
+
+          برنامج لتحويل وتعديل الصور والفيديو والصوت وملفات PDF. تطوير **{DEV}**.
+
+          مبني على [IBMC](https://github.com/ibrata2/ibra-adawat) (إبراهيم) وعلى [أدوات](https://github.com/motalim-ai/adawat) (متعلم). الرخصة [GPL v3](LICENSE).
+          تعديلات {DEV} (تشرين الثاني 2026): اسم وأيقونة جديدان، حذف الإعلانات والروابط، فحص SHA-256 للتحديث.
+
+          **التحميل:** من [Releases](../../releases/latest).
+
+          ---
+
+          """ + old[start:])
+          notes = R / "THIRD-PARTY-NOTICES.md"
+          write(notes, read(notes) + f"\n## {NAME} changes\n\n{NAME} is a version of IBMC (https://github.com/ibrata2/ibra-adawat) modified by {DEV} in November 2026: new name and icon, adverts and links removed, SHA-256 check for updates. Licensed under the GNU GPL v3.\n")
+
+          # ---- icon: a white arch (the letter n) with a gold spark ----
+          N = 1024
+          def gradient(w, h, top, bottom):
+              g = Image.new("RGB", (1, h))
+              for y in range(h):
+                  t = y / max(h - 1, 1)
+                  g.putpixel((0, y), tuple(round(a + (b - a) * t) for a, b in zip(top, bottom)))
+              return g.resize((w, h)).convert("RGBA")
+
+          TOP, BOTTOM = (13, 148, 136), (15, 23, 66)
+          WHITE, GOLD = (255, 255, 255, 255), (255, 200, 61, 255)
+
+          def arch_points():
+              pts = [(300, 760), (300, 360), (410, 360), (410, 430)]
+              pts += [(520 - 110 * math.cos(a), 470 - 110 * math.sin(a)) for a in [math.pi * i / 40 for i in range(0, 21)]]
+              pts += [(520 + 170 * math.sin(a), 530 - 170 * math.cos(a)) for a in [math.pi / 2 * i / 20 for i in range(0, 21)]]
+              pts += [(690, 760), (570, 760), (570, 540)]
+              pts += [(490 + 80 * math.cos(a), 540 - 80 * math.sin(a)) for a in [math.pi * i / 40 for i in range(0, 41)]]
+              pts += [(410, 760)]
+              return pts
+
+          def spark_points(cx=715, cy=300, r=150, k=0.24):
+              out = []
+              for i in range(8):
+                  a = math.pi / 4 * i - math.pi / 2
+                  q = r if i % 2 == 0 else r * k
+                  out.append((cx + q * math.cos(a), cy + q * math.sin(a)))
+              return out
+
+          mark = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+          d = ImageDraw.Draw(mark)
+          d.polygon(arch_points(), fill=WHITE)
+          d.polygon(spark_points(), fill=GOLD)
+
+          square = gradient(N, N, TOP, BOTTOM)
+          square.alpha_composite(mark)
+          mask = Image.new("L", (N, N), 0)
+          ImageDraw.Draw(mask).rounded_rectangle((32, 32, N - 32, N - 32), radius=230, fill=255)
+          rounded = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+          rounded.paste(square, (0, 0), mask)
+
+          def sized(img, s):
+              return img.resize((s, s), Image.LANCZOS)
+
+          sized(rounded, 256).save(R / "windows/assets/AppIcon-256.png")
+          rounded.save(R / "windows/assets/Adawat.ico", sizes=[(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)])
+          square.convert("RGB").save(R / "ios/IBMC/Assets.xcassets/AppIcon.appiconset/AppIcon.png")
+          sized(rounded, 512).save(R / "ios/IBMC/Assets.xcassets/Logo.imageset/Logo.png")
+          for density, s in {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}.items():
+              sized(rounded, s).save(AND / f"res/mipmap-{density}/ic_launcher.png")
+          for bmp in R.glob("windows/installer/wizard-*.bmp"):
+              w, h = Image.open(bmp).size
+              if "corner" in bmp.name:
+                  panel = Image.new("RGBA", (w, h), WHITE)
+                  panel.alpha_composite(sized(rounded, min(w, h)))
+              else:
+                  panel = gradient(w, h, TOP, BOTTOM)
+                  s = int(w * 0.9)
+                  panel.alpha_composite(sized(mark, s), ((w - s) // 2, (h - s) // 2))
+              panel.convert("RGB").save(bmp)
+
+          def path(points):
+              # 108-unit Android canvas, the mark scaled into the safe zone.
+              xy = [((x - 512) * 0.115 + 54, (y - 480) * 0.115 + 54) for x, y in points]
+              return "M" + " L".join(f"{x:.2f},{y:.2f}" for x, y in xy) + " Z"
+
+          HEAD = '<?xml version="1.0" encoding="utf-8"?>\n<vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
+          def vector(name, colors, size=108, scale=1.0):
+              body = "".join(f'        <path android:fillColor="{c}" android:pathData="{path(p)}" />\n'
+                             for c, p in zip(colors, [arch_points(), spark_points()]))
+              write(AND / f"res/drawable/{name}.xml", HEAD +
+                    f'    android:width="{size}dp" android:height="{size}dp" android:viewportWidth="108" android:viewportHeight="108">\n'
+                    f'    <group android:scaleX="{scale}" android:scaleY="{scale}" android:pivotX="54" android:pivotY="54">\n{body}    </group>\n</vector>\n')
+
+          vector("ic_launcher_foreground", ["#FFFFFFFF", "#FFFFC83D"])
+          vector("ic_launcher_monochrome", ["#FF000000", "#FF000000"])
+          vector("ic_notification", ["#FFFFFFFF", "#FFFFFFFF"], size=24, scale=1.5)
+          write(AND / "res/drawable/ic_launcher_background.xml", HEAD +
+                '    xmlns:aapt="http://schemas.android.com/aapt"\n'
+                '    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">\n'
+                '    <path android:pathData="M0,0h108v108h-108z">\n        <aapt:attr name="android:fillColor">\n'
+                '            <gradient android:type="linear" android:startX="54" android:startY="0" android:endX="54" android:endY="108">\n'
+                '                <item android:offset="0" android:color="#FF0D9488" />\n                <item android:offset="1" android:color="#FF0F1742" />\n'
+                '            </gradient>\n        </aapt:attr>\n    </path>\n</vector>\n')
+
+          # ---- check ----
+          bad = re.compile(r"ibraprogram|ibrata2/ibra-adawat/(main|releases)|api\.github\.com/repos/ibrata2|t\.me/|tiktok\.com/@|Promo\.|StoreSlides|MyApps")
+          left = [str(p) for p in files if p.exists() and bad.search(read(p))]
+          assert not left, f"old links remain: {left}"
+          for p in list(R.glob("windows/shared/*.json")) + list(AND.glob("assets/*.json")):
+              json.loads(read(p).lstrip("﻿"))
+          print("Rebrand applied.")
+          PYEOF
+          python3 -I "$RUNNER_TEMP/rebrand.py"
+
+      - name: Commit and start the build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add -A
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Rebrand to nice tools: new name and icon, remove adverts and links"
+          git push
+          gh workflow run windows.yml --ref main
