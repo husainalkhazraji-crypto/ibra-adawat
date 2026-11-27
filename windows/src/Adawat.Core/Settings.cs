@@ -14,7 +14,7 @@ public enum ModifierKey { Shift, Ctrl, Alt, None }
 /// <summary>Everything the user can change, saved as JSON in %APPDATA%\Adawat\settings.json (~/.config/Adawat on Linux).</summary>
 public sealed class Settings
 {
-    public static readonly string Folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IBMC");
+    public static readonly string Folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "nice tools");
     private static readonly string FilePath = Path.Combine(Folder, "settings.json");
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true, Converters = { new JsonStringEnumConverter() } };
 
@@ -75,13 +75,6 @@ public sealed class Settings
 
     private static Settings Load()
     {
-        // Settings and downloaded models from IBRA Adawat, the earlier name, move over once.
-        try
-        {
-            var old = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IbraAdawat");
-            if (!Directory.Exists(Folder) && Directory.Exists(old)) Directory.Move(old, Folder);
-        }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
         try
         {
             if (File.Exists(FilePath)) return JsonSerializer.Deserialize<Settings>(File.ReadAllText(FilePath), Json) ?? new();

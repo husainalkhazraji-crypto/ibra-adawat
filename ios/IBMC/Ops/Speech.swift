@@ -8,7 +8,7 @@ enum SpeechOps {
             SFSpeechRecognizer.requestAuthorization { done.resume(returning: $0) }
         }
         guard status == .authorized else {
-            throw OpError("Allow speech recognition for IBMC in Settings", "اسمح لـ IBMC بالتعرف على الكلام من الإعدادات")
+            throw OpError("Allow speech recognition for nice tools in Settings", "اسمح لـ nice tools بالتعرف على الكلام من الإعدادات")
         }
         guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: locale)), recognizer.isAvailable else {
             throw OpError("Speech recognition for this language isn't available right now", "التعرف على هاي اللغة مو متوفر هسه")

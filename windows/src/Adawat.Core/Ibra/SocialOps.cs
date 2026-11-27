@@ -160,13 +160,13 @@ public static class SocialOps
             {
                 args.AddRange(["-map", "0:a?"]);
                 args.AddRange(VideoTail(info));
-                output = Output.PathFor(file, "mp4", "IBRA");
+                output = Output.PathFor(file, "mp4", "nice");
             }
             else
             {
                 var (ext, still) = StillOutput(file);
                 args.AddRange(still);
-                output = Output.PathFor(file, ext, "IBRA");
+                output = Output.PathFor(file, ext, "nice");
             }
             outputs.Add(await Encode(args, output, info.Duration, context.ProgressFor(index, files.Count), context.Cancellation));
         }

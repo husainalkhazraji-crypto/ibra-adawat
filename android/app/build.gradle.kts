@@ -8,7 +8,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.ibrata2.ibmc"
+        applicationId = "com.husainalkhazraji.nicetools"
         minSdk = 29
         targetSdk = 37
         versionCode = (providers.gradleProperty("ibmc.versionCode").orNull ?: "1").toInt()

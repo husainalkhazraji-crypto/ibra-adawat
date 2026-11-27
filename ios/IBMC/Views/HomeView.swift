@@ -38,7 +38,6 @@ struct HomeView: View {
                         filesCard
                         tools
                         if !store.jobs.isEmpty { jobs }
-                        MyAppsCard()
                     }
                     .padding(16)
                 }
@@ -61,8 +60,8 @@ struct HomeView: View {
         HStack(spacing: 12) {
             Image("Logo").resizable().frame(width: 52, height: 52)
             VStack(alignment: .leading, spacing: 2) {
-                Text("IBMC").font(.title2.bold())
-                Text("Ibrahim Multimedia Converter").font(.caption).foregroundStyle(.secondary)
+                Text("nice tools").font(.title2.bold())
+                Text("by Husain alkhazraji").font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
             Button { showSettings = true } label: {

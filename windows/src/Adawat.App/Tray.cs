@@ -37,10 +37,10 @@ public sealed class Tray : IDisposable
             item.Click += (_, _) => action();
             return item;
         }
-        var hint = new MenuItem { Header = L10n.T("Right-click any file and choose IBMC"), IsEnabled = false };
+        var hint = new MenuItem { Header = L10n.T("Right-click any file and choose nice tools"), IsEnabled = false };
         menu.Items.Add(hint);
         menu.Items.Add(new Separator());
-        menu.Items.Add(Item("Open IBMC", () => HomeWindow.Present(), "\uE8A7"));
+        menu.Items.Add(Item("Open nice tools", () => HomeWindow.Present(), "\uE8A7"));
         menu.Items.Add(Item("New Float", () => Floats.Create([]), ""));
         var closeFloats = Item("Close All Floats", Floats.CloseAll, "");
         menu.Items.Add(closeFloats);
@@ -58,7 +58,7 @@ public sealed class Tray : IDisposable
         menu.Items.Add(drag);
         if (RightClick.IsWindows11)
         {
-            var classic = new MenuItem { Header = L10n.T("Show IBMC on the first right-click (classic menu)"), IsCheckable = true, IsChecked = RightClick.ClassicMenu };
+            var classic = new MenuItem { Header = L10n.T("Show nice tools on the first right-click (classic menu)"), IsCheckable = true, IsChecked = RightClick.ClassicMenu };
             classic.Click += (_, _) => RightClick.ClassicMenu = classic.IsChecked;
             menu.Items.Add(classic);
         }

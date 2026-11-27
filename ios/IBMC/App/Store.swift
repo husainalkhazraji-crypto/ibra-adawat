@@ -16,10 +16,10 @@ extension URL {
     }
 }
 
-/// Where results go: Documents/IBMC, which the Files app shows under "On My iPhone › IBMC".
+/// Where results go: Documents/nice tools, which the Files app shows under "On My iPhone › nice tools".
 enum Outputs {
     static var folder: URL {
-        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("IBMC", isDirectory: true)
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nice tools", isDirectory: true)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

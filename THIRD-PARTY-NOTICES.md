@@ -187,3 +187,7 @@ The Windows build also bundles or downloads on first use:
 - **IS-Net / DIS** (Apache 2.0), ONNX export from rembg — background removal, downloads on first use, https://github.com/xuebinqin/DIS
 - **ONNX Runtime** (MIT) — https://github.com/microsoft/onnxruntime
 - **MyMemory** translation API — online translation of subtitles to languages other than English, https://mymemory.translated.net
+
+## nice tools changes
+
+nice tools is a version of IBMC (https://github.com/ibrata2/ibra-adawat) modified by Husain alkhazraji in November 2026: new name and icon, adverts and links removed, SHA-256 check for updates. Licensed under the GNU GPL v3.

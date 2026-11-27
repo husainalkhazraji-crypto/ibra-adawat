@@ -24,8 +24,8 @@ struct SettingsView: View {
                     .pickerStyle(.segmented)
                 }
                 Section(L.t("Results", "النتائج")) {
-                    Text(L.t("Results are saved in Files › On My iPhone › IBMC, and you can share them or save them to Photos from each task.",
-                             "النتائج تنحفظ بتطبيق الملفات ← على الآيفون ← IBMC، وتگدر تشاركها أو تحفظها بالصور من كل مهمة."))
+                    Text(L.t("Results are saved in Files › On My iPhone › nice tools, and you can share them or save them to Photos from each task.",
+                             "النتائج تنحفظ بتطبيق الملفات ← على الآيفون ← nice tools، وتگدر تشاركها أو تحفظها بالصور من كل مهمة."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
                 Section(L.t("About", "حول")) {
@@ -33,16 +33,13 @@ struct SettingsView: View {
                         HStack {
                             Image("Logo").resizable().frame(width: 44, height: 44)
                             VStack(alignment: .leading) {
-                                Text("IBMC — Ibrahim Multimedia Converter").font(.subheadline.bold())
+                                Text("nice tools").font(.subheadline.bold())
                                 Text(L.t("Version", "النسخة") + " " + (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")).font(.caption).foregroundStyle(.secondary)
                             }
                         }
-                        Text("برمجة وتطوير ابراهيم الخزرجي").font(.headline)
+                        Text("برمجة وتطوير Husain alkhazraji").font(.headline)
                     }
-                    Link(destination: URL(string: "https://ibraprogram.netlify.app/")!) { Label(L.t("My apps · ibraprogram.netlify.app", "تطبيقاتي · ibraprogram.netlify.app"), systemImage: "square.grid.2x2.fill").bold() }
-                    Link(destination: URL(string: "https://t.me/ibraprogram")!) { Label("Telegram · t.me/ibraprogram", systemImage: "paperplane.fill") }
-                    Link(destination: URL(string: "https://www.tiktok.com/@ibraprogram")!) { Label("TikTok · ibraprogram", systemImage: "music.note") }
-                    Text("Based on Adawat by Motalim · GPL v3").font(.caption).foregroundStyle(.secondary)
+                    Text("Based on IBMC by Ibrahim Rosem and Adawat by Motalim · GPL v3").font(.caption).foregroundStyle(.secondary)
                 }
             }
             .navigationTitle(L.t("Settings", "الإعدادات"))

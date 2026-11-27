@@ -22,7 +22,7 @@ public static class SettingsWindow
     public static ToolWindow Make()
     {
         var settings = Settings.Current;
-        var window = new ToolWindow("IBMC Settings", 460);
+        var window = new ToolWindow("nice tools Settings", 460);
         var stack = new StackPanel();
         void Section(string title) { stack.Children.Add(UI.Text(title, 12, FontWeights.SemiBold, Theme.Muted).Pad(0, 6)); }
         void Save() => settings.Save();
@@ -60,12 +60,12 @@ public static class SettingsWindow
         }, icon: "\uE895");
         stack.Children.Add(UI.Row(L10n.IsArabic ? "التحديث" : "Update", checkButton, 36));
         stack.Children.Add(updateState);
-        stack.Children.Add(UI.Check(L10n.IsArabic ? "البحث عن نسخة جديدة عند التشغيل" : "Look for a new version when IBMC starts",
+        stack.Children.Add(UI.Check(L10n.IsArabic ? "البحث عن نسخة جديدة عند التشغيل" : "Look for a new version when nice tools starts",
                                     settings.AutoCheckUpdates, v => { settings.AutoCheckUpdates = v; Save(); }).Pad(0, 4));
         stack.Children.Add(UI.Divider());
 
         Section("General");
-        stack.Children.Add(UI.Check("Start IBMC when Windows starts", Startup.IsEnabled, Startup.Set).Pad(0, 4));
+        stack.Children.Add(UI.Check("Start nice tools when Windows starts", Startup.IsEnabled, Startup.Set).Pad(0, 4));
         var restart = UI.Button("Restart Now", () =>
         {
             AdawatApp.Restart();
@@ -85,7 +85,7 @@ public static class SettingsWindow
             restart.Visibility = v != (L10n.IsArabic ? "ar" : "en") ? Visibility.Visible : Visibility.Collapsed;
         })));
         var restartRow = new DockPanel { LastChildFill = false };
-        var note = UI.Caption("IBMC restarts to change the language.");
+        var note = UI.Caption("nice tools restarts to change the language.");
         DockPanel.SetDock(restart, Dock.Right);
         restartRow.Children.Add(restart);
         restartRow.Children.Add(note);
@@ -96,19 +96,9 @@ public static class SettingsWindow
 
         stack.Children.Add(UI.Divider());
         Section(L10n.IsArabic ? "حول" : "About");
-        stack.Children.Add(UI.Text("IBMC — Ibrahim Multimedia Converter", 13, FontWeights.SemiBold));
-        stack.Children.Add(UI.Text("برمجة وتطوير ابراهيم الخزرجي", 13).Pad(0, 2));
-        var links = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 6, 0, 0) };
-        void Open(string url) { try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); } catch (Exception) { } }
-        var site = UI.Button(L10n.IsArabic ? "تطبيقاتي · ibraprogram.netlify.app" : "My apps · ibraprogram.netlify.app", () => Open("https://ibraprogram.netlify.app/"), primary: true, icon: "\uE774");
-        site.HorizontalAlignment = HorizontalAlignment.Left;
-        site.Margin = new Thickness(0, 6, 0, 0);
-        stack.Children.Add(site);
-        links.Children.Add(UI.Button("Telegram", () => Open("https://t.me/ibraprogram"), icon: "\uE724"));
-        links.Children.Add(new Border { Width = 8 });
-        links.Children.Add(UI.Button("TikTok · ibraprogram", () => Open("https://www.tiktok.com/@ibraprogram"), icon: "\uE8B2"));
-        stack.Children.Add(links);
-        stack.Children.Add(UI.Caption("Based on Adawat by Motalim · GPL v3").Pad(0, 4));
+        stack.Children.Add(UI.Text("nice tools", 13, FontWeights.SemiBold));
+        stack.Children.Add(UI.Text("برمجة وتطوير Husain alkhazraji", 13).Pad(0, 2));
+        stack.Children.Add(UI.Caption("Based on IBMC by Ibrahim Rosem and Adawat by Motalim · GPL v3").Pad(0, 4));
 
         window.Body = stack;
         window.Leading(UI.Button("Restore Defaults", () =>
@@ -131,13 +121,12 @@ public static class Startup
 {
     private const string Key = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
-    public static bool IsEnabled => Registry.CurrentUser.OpenSubKey(Key)?.GetValue("IBMC") != null;
+    public static bool IsEnabled => Registry.CurrentUser.OpenSubKey(Key)?.GetValue("NiceTools") != null;
 
     public static void Set(bool enabled)
     {
         using var key = Registry.CurrentUser.CreateSubKey(Key);
-        key.DeleteValue("IbraAdawat", false);
-        if (enabled) key.SetValue("IBMC", $"\"{Environment.ProcessPath}\" --background");
-        else key.DeleteValue("IBMC", false);
+        if (enabled) key.SetValue("NiceTools", $"\"{Environment.ProcessPath}\" --background");
+        else key.DeleteValue("NiceTools", false);
     }
 }

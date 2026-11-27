@@ -19,7 +19,7 @@ public static class Program
             return Snapshots.Run(app, args.Where((a, i) => a != "--lang" && (i == 0 || args[i - 1] != "--lang")).ToArray());
         }
         var opened = RightClick.FilesIn(args);
-        using var single = new Mutex(true, "Local\\IBMC.SingleInstance", out var first);
+        using var single = new Mutex(true, "Local\\NiceTools.SingleInstance", out var first);
         if (!first && args.Contains("--restart"))
         {
             // Restarting (style or language changed): wait for the old copy to let go.
@@ -80,14 +80,13 @@ public sealed class AdawatApp : Application
         }));
         _tray = new Tray();
         Updater.CheckOnStart();
-        Promo.Refresh();
         if (_opened.Length > 0) RightClick.Add(_opened);
         else if (!_background) HomeWindow.Present();
         if (!Settings.Current.HasSeenWelcome && _opened.Length == 0)
         {
             Settings.Current.HasSeenWelcome = true;
             Settings.Current.Save();
-            Hud.Shared.ShowMessage(L10n.T("Right-click any file and choose IBMC"), Hud.Style.Success);
+            Hud.Shared.ShowMessage(L10n.T("Right-click any file and choose nice tools"), Hud.Style.Success);
         }
     }
 

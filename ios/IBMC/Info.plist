@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key><string>ar</string>
-	<key>CFBundleDisplayName</key><string>IBMC</string>
+	<key>CFBundleDisplayName</key><string>nice tools</string>
 	<key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
-	<key>CFBundleName</key><string>IBMC</string>
+	<key>CFBundleName</key><string>nice tools</string>
 	<key>CFBundlePackageType</key><string>APPL</string>
 	<key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
@@ -19,9 +19,9 @@
 	<key>UISupportedInterfaceOrientations~ipad</key><array><string>UIInterfaceOrientationPortrait</string><string>UIInterfaceOrientationPortraitUpsideDown</string><string>UIInterfaceOrientationLandscapeLeft</string><string>UIInterfaceOrientationLandscapeRight</string></array>
 	<key>UIFileSharingEnabled</key><true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key><false/>
-	<key>NSPhotoLibraryUsageDescription</key><string>IBMC يفتح الصور والفيديوهات اللي تختارها حتى يحولها أو يعدلها.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key><string>IBMC يحفظ النتائج بالصور.</string>
-	<key>NSSpeechRecognitionUsageDescription</key><string>IBMC يحول الكلام اللي بالصوت أو الفيديو إلى نص.</string>
+	<key>NSPhotoLibraryUsageDescription</key><string>nice tools يفتح الصور والفيديوهات اللي تختارها حتى يحولها أو يعدلها.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key><string>nice tools يحفظ النتائج بالصور.</string>
+	<key>NSSpeechRecognitionUsageDescription</key><string>nice tools يحول الكلام اللي بالصوت أو الفيديو إلى نص.</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

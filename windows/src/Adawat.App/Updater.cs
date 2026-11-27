@@ -9,12 +9,12 @@ namespace Adawat.App;
 
 /// <summary>
 /// Updates from the GitHub releases of husainalkhazraji-crypto/ibra-adawat: compares the latest release's version with this copy, downloads
-/// IBMC-Setup-x64.exe, checks its SHA-256 and runs it quietly; the installer closes IBMC, installs over it and starts it again.
+/// NiceTools-Setup-x64.exe, checks its SHA-256 and runs it quietly; the installer closes nice tools, installs over it and starts it again.
 /// </summary>
 public static class Updater
 {
     private const string LatestUrl = "https://api.github.com/repos/husainalkhazraji-crypto/ibra-adawat/releases/latest";
-    private const string AssetName = "IBMC-Setup-x64.exe";
+    private const string AssetName = "NiceTools-Setup-x64.exe";
 
     public sealed record Release(Version Version, string Tag, string Notes, string DownloadUrl, long Size, string Digest);
 
@@ -97,14 +97,14 @@ public static class Updater
         if (_offer != null) { _offer.Activate(); return; }
         var window = new ToolWindow(T("Update available", "يوجد تحديث"), 440);
         var stack = new StackPanel();
-        stack.Children.Add(UI.Text(T($"IBMC {release.Version} is available", $"نسخة IBMC {release.Version} متوفرة"), 15, FontWeights.SemiBold));
+        stack.Children.Add(UI.Text(T($"nice tools {release.Version} is available", $"نسخة nice tools {release.Version} متوفرة"), 15, FontWeights.SemiBold));
         stack.Children.Add(UI.Caption(T($"You have {CurrentText}. Download size {Format.Bytes(release.Size)}.",
                                         $"نسختك {CurrentText}. حجم التحميل {Format.Bytes(release.Size)}.")).Pad(0, 4));
         var progress = new ProgressBar { Height = 6, Minimum = 0, Maximum = 1, Margin = new Thickness(0, 12, 0, 4), Foreground = Theme.Accent, Background = Theme.ButtonFill, BorderThickness = new Thickness(0), Visibility = Visibility.Collapsed };
         var state = UI.Caption("");
         stack.Children.Add(progress);
         stack.Children.Add(state);
-        stack.Children.Add(UI.Caption(T("IBMC closes while it updates and opens again when done.", "البرنامج يتسكّر أثناء التحديث ويرجع يفتح وحده.")).Pad(0, 8));
+        stack.Children.Add(UI.Caption(T("nice tools closes while it updates and opens again when done.", "البرنامج يتسكّر أثناء التحديث ويرجع يفتح وحده.")).Pad(0, 8));
         window.Body = stack;
         var cancel = new CancellationTokenSource();
         Button? update = null;
@@ -150,9 +150,9 @@ public static class Updater
 
     private static async Task<string> Download(Release release, Action<double> progress, CancellationToken cancellation)
     {
-        var folder = Path.Combine(Path.GetTempPath(), "IBMC-update");
+        var folder = Path.Combine(Path.GetTempPath(), "NiceTools-update");
         Directory.CreateDirectory(folder);
-        var path = Path.Combine(folder, $"IBMC-Setup-{release.Version}.exe");
+        var path = Path.Combine(folder, $"NiceTools-Setup-{release.Version}.exe");
         if (File.Exists(path) && await Matches(path, release.Digest, cancellation)) return path;
         await Core.Ibra.IbraTools.Fetch(release.DownloadUrl, path, progress, cancellation);
         if (!await Matches(path, release.Digest, cancellation))

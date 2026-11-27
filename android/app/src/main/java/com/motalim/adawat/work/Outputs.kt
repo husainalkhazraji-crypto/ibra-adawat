@@ -51,7 +51,7 @@ object Outputs {
     private fun uniqueFolder(context: Context, root: String, name: String): String {
         val files = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         fun taken(candidate: String) = context.contentResolver.query(
-            files, arrayOf(MediaStore.MediaColumns._ID), "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?", arrayOf("$root/IBMC/$candidate/%"), null,
+            files, arrayOf(MediaStore.MediaColumns._ID), "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?", arrayOf("$root/nice tools/$candidate/%"), null,
         )?.use { it.count > 0 } ?: false
         if (!taken(name)) return name
         var n = 2
@@ -67,7 +67,7 @@ object Outputs {
             FileKind.Audio -> MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) to Environment.DIRECTORY_MUSIC
             else -> MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) to Environment.DIRECTORY_DOWNLOADS
         }
-        val relative = "$folder/Adawat" + (subfolder?.let { "/$it" } ?: "")
+        val relative = "$folder/nice tools" + (subfolder?.let { "/$it" } ?: "")
         val values = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
             put(MediaStore.MediaColumns.MIME_TYPE, mime)

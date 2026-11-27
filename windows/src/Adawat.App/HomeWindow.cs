@@ -10,7 +10,7 @@ using Microsoft.Win32;
 namespace Adawat.App;
 
 /// <summary>
-/// IBMC's main window, laid out like a classic converter: a toolbar on top; on one side the sections (Video, Audio, Image,
+/// nice tools's main window, laid out like a classic converter: a toolbar on top; on one side the sections (Video, Audio, Image,
 /// PDF and documents, Tools), one open at a time, each a grid of tiles; on the other side the list of tasks with their
 /// progress and results. A tile asks for files (or takes the files dropped on it, or the files waiting in the window) and
 /// adds a task; tools with options open their window first.
@@ -58,7 +58,7 @@ public sealed class HomeWindow : Window
 
     private HomeWindow()
     {
-        Title = "IBMC — Ibrahim Multimedia Converter";
+        Title = "nice tools";
         Width = 1180;
         Height = 760;
         MinWidth = 900;
@@ -79,8 +79,8 @@ public sealed class HomeWindow : Window
         var brand = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 14, 0) };
         brand.Children.Add(new Image { Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Assets/AppIcon-256.png")), Width = 34, Height = 34 });
         var brandText = new StackPanel { Margin = new Thickness(8, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
-        brandText.Children.Add(new TextBlock { Text = "IBMC", FontSize = 17, FontWeight = FontWeights.Bold, Foreground = Theme.Ink, FlowDirection = FlowDirection.LeftToRight });
-        brandText.Children.Add(new TextBlock { Text = "Ibrahim Multimedia Converter", FontSize = 10, Foreground = Theme.Muted, FlowDirection = FlowDirection.LeftToRight });
+        brandText.Children.Add(new TextBlock { Text = "nice tools", FontSize = 17, FontWeight = FontWeights.Bold, Foreground = Theme.Ink, FlowDirection = FlowDirection.LeftToRight });
+        brandText.Children.Add(new TextBlock { Text = "by Husain alkhazraji", FontSize = 10, Foreground = Theme.Muted, FlowDirection = FlowDirection.LeftToRight });
         brand.Children.Add(brandText);
         DockPanel.SetDock(brand, Dock.Left);
         toolbar.Children.Add(brand);
@@ -105,9 +105,6 @@ public sealed class HomeWindow : Window
         var linkButton = ToolButton("", T("Download from Link", "تحميل من رابط"), Windows.IbraWindows.DownloadLink);
         DockPanel.SetDock(linkButton, Dock.Right);
         toolbar.Children.Add(linkButton);
-        var appsButton = ToolButton("\uE71D", T("My apps", "تطبيقاتي"), Promo.Present);
-        DockPanel.SetDock(appsButton, Dock.Right);
-        toolbar.Children.Add(appsButton);
         DockPanel.SetDock(toolbar, Dock.Top);
         root.Children.Add(toolbar);
         var line = new Border { Height = 1, Background = Theme.Hairline };
@@ -159,10 +156,6 @@ public sealed class HomeWindow : Window
         DockPanel.SetDock(_readyBar, Dock.Top);
         sectionsSide.Children.Add(_readyBar);
         BuildSections();
-        // Newest programs and games from IBRA STORE (Windows only).
-        var promo = StoreSlides.Make();
-        DockPanel.SetDock(promo, Dock.Bottom);
-        sectionsSide.Children.Add(promo);
         sectionsSide.Children.Add(new Border { Child = _sections, Background = Theme.Card, CornerRadius = new CornerRadius(12), BorderBrush = Theme.Hairline, BorderThickness = new Thickness(1), ClipToBounds = true });
         Grid.SetColumn(sectionsSide, 0);
         body.Children.Add(sectionsSide);
@@ -188,8 +181,8 @@ public sealed class HomeWindow : Window
         hint.Children.Add(new TextBlock { Text = T("No tasks yet", "ماكو مهام بعد"), FontSize = 17, FontWeight = FontWeights.SemiBold, Foreground = Theme.Ink, HorizontalAlignment = HorizontalAlignment.Center });
         hint.Children.Add(new TextBlock
         {
-            Text = T("Pick a tool on the side, or drop files here, or right-click any file in Explorer and choose IBMC.",
-                     "اختار أداة من الأقسام، أو اسحب الملفات هنا، أو كليك يمين على أي ملف واختار IBMC."),
+            Text = T("Pick a tool on the side, or drop files here, or right-click any file in Explorer and choose nice tools.",
+                     "اختار أداة من الأقسام، أو اسحب الملفات هنا، أو كليك يمين على أي ملف واختار nice tools."),
             FontSize = 12, Foreground = Theme.Muted, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, MaxWidth = 340, Margin = new Thickness(0, 6, 0, 0),
         });
         _emptyTasks = new Border { Child = hint };
@@ -217,7 +210,7 @@ public sealed class HomeWindow : Window
         Jobs.All.CollectionChanged += OnJobsChanged;
         Jobs.QueueChanged += () => Dispatcher.BeginInvoke(Refresh);
         foreach (var job in Jobs.All) AddRow(job);
-        // Closing hides; IBMC stays next to the clock for the right-click menu.
+        // Closing hides; nice tools stays next to the clock for the right-click menu.
         Closing += (_, e) => { if (!_quitting) { e.Cancel = true; Hide(); } };
         Open(Math.Clamp(Settings.Current.HomeSection, 0, HomeCatalog.Sections.Count - 1));
         Refresh();

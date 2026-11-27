@@ -11,13 +11,13 @@ public static class IbraTools
     private static HttpClient MakeClient()
     {
         var client = new HttpClient { Timeout = TimeSpan.FromHours(2) };
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("IBMC/1.0");
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("NiceTools/1.0");
         return client;
     }
 
     public static HttpClient Client => Http;
 
-    /// <summary>Folder for downloaded models: %APPDATA%\IBMC\models.</summary>
+    /// <summary>Folder for downloaded models: %APPDATA%\nice tools\models.</summary>
     public static string Models
     {
         get
