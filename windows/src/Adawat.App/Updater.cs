@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,15 +8,15 @@ using Adawat.Core;
 namespace Adawat.App;
 
 /// <summary>
-/// Updates from the GitHub releases of ibrata2/ibra-adawat: compares the latest release's version with this copy, downloads
-/// IBMC-Setup-x64.exe and runs it quietly; the installer closes IBMC, installs over it and starts it again.
+/// Updates from the GitHub releases of husainalkhazraji-crypto/ibra-adawat: compares the latest release's version with this copy, downloads
+/// IBMC-Setup-x64.exe, checks its SHA-256 and runs it quietly; the installer closes IBMC, installs over it and starts it again.
 /// </summary>
 public static class Updater
 {
-    private const string LatestUrl = "https://api.github.com/repos/ibrata2/ibra-adawat/releases/latest";
+    private const string LatestUrl = "https://api.github.com/repos/husainalkhazraji-crypto/ibra-adawat/releases/latest";
     private const string AssetName = "IBMC-Setup-x64.exe";
 
-    public sealed record Release(Version Version, string Tag, string Notes, string DownloadUrl, long Size);
+    public sealed record Release(Version Version, string Tag, string Notes, string DownloadUrl, long Size, string Digest);
 
     public static Version Current
     {
@@ -47,7 +48,8 @@ public static class Updater
         {
             if (asset.GetProperty("name").GetString() != AssetName) continue;
             return new Release(version, tag, root.TryGetProperty("body", out var body) ? body.GetString() ?? "" : "",
-                               asset.GetProperty("browser_download_url").GetString() ?? "", asset.GetProperty("size").GetInt64());
+                               asset.GetProperty("browser_download_url").GetString() ?? "", asset.GetProperty("size").GetInt64(),
+                               asset.TryGetProperty("digest", out var digest) ? digest.GetString() ?? "" : "");
         }
         return null;
     }
@@ -151,13 +153,21 @@ public static class Updater
         var folder = Path.Combine(Path.GetTempPath(), "IBMC-update");
         Directory.CreateDirectory(folder);
         var path = Path.Combine(folder, $"IBMC-Setup-{release.Version}.exe");
-        if (File.Exists(path) && new FileInfo(path).Length == release.Size) return path;
+        if (File.Exists(path) && await Matches(path, release.Digest, cancellation)) return path;
         await Core.Ibra.IbraTools.Fetch(release.DownloadUrl, path, progress, cancellation);
-        if (release.Size > 0 && new FileInfo(path).Length != release.Size)
+        if (!await Matches(path, release.Digest, cancellation))
         {
             Core.Ibra.IbraTools.TryDelete(path);
-            throw new IOException("Incomplete download");
+            throw new IOException("The installer's SHA-256 does not match the release");
         }
         return path;
+    }
+
+    /// <summary>True only when the file's SHA-256 equals GitHub's "sha256:…" digest; a missing digest never matches.</summary>
+    private static async Task<bool> Matches(string path, string digest, CancellationToken cancellation)
+    {
+        await using var file = File.OpenRead(path);
+        var hash = await SHA256.HashDataAsync(file, cancellation);
+        return string.Equals(digest, "sha256:" + Convert.ToHexString(hash), StringComparison.OrdinalIgnoreCase);
     }
 }
